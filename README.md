@@ -8,7 +8,7 @@ Outputs are drafting demos, not legal advice.
 
 ## What is in the tree
 
-The package loads `configs/default.yaml` and can probe the local GPU for a working 4-bit kernel. Data preparation, the trainer, evaluation, and the query API are not in this tree yet.
+The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, and prepares the LEDGAR corpus. `scripts/prepare_corpus.py` downloads the provisions, drops headings, exact copies, and near-copies, caps the train split at 12,000 stratified rows, and writes `data/processed/provisions.jsonl` (gitignored). Chat-format training files, the trainer, evaluation, and the query API are not in this tree yet.
 
 ## Stack
 
@@ -31,6 +31,8 @@ python -m venv .venv
 pip install -r requirements.txt
 pip install -e .
 python scripts/check_gpu.py
+python scripts/inspect_corpus.py
+python scripts/prepare_corpus.py
 pytest
 ```
 
@@ -39,11 +41,15 @@ pytest
 ## Layout
 
 ```text
-configs/default.yaml     training hyperparameters
-src/clausedraft/         package
-scripts/check_gpu.py     CUDA and NF4 smoke check
-tests/                   config and probe tests
-docs/architecture.md     data flow
+configs/default.yaml       training hyperparameters
+src/clausedraft/           package
+src/clausedraft/data/      LEDGAR load, clean, dedupe, sample
+scripts/check_gpu.py       CUDA and NF4 smoke check
+scripts/inspect_corpus.py  raw length and label counts
+scripts/prepare_corpus.py  cleaned provisions JSONL
+tests/                     unit tests
+docs/architecture.md       data flow
+docs/data.md               corpus, license, filters
 ```
 
-See [docs/architecture.md](docs/architecture.md).
+See [docs/architecture.md](docs/architecture.md) and [docs/data.md](docs/data.md).
