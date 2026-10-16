@@ -8,7 +8,7 @@ Outputs are drafting demos, not legal advice.
 
 ## What is in the tree
 
-The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, and prepares the LEDGAR corpus. `scripts/prepare_corpus.py` downloads the provisions, drops headings, exact copies, and near-copies, caps the train split at 12,000 stratified rows, and writes `data/processed/provisions.jsonl` (gitignored). Chat-format training files, the trainer, evaluation, and the query API are not in this tree yet.
+The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, and prepares the LEDGAR corpus. `scripts/prepare_corpus.py` writes cleaned provisions. `scripts/build_jsonl.py` cuts each provision into a prefix and a gold tail, writes chat JSONL for train, validation, and a held-out test split, and drops any train or validation row whose text or tail also appears in test. Those JSONL files are gitignored. The trainer, evaluation, and the query API are not in this tree yet.
 
 ## Stack
 
@@ -33,6 +33,8 @@ pip install -e .
 python scripts/check_gpu.py
 python scripts/inspect_corpus.py
 python scripts/prepare_corpus.py
+python scripts/build_jsonl.py
+python scripts/show_examples.py
 pytest
 ```
 
@@ -47,6 +49,8 @@ src/clausedraft/data/      LEDGAR load, clean, dedupe, sample
 scripts/check_gpu.py       CUDA and NF4 smoke check
 scripts/inspect_corpus.py  raw length and label counts
 scripts/prepare_corpus.py  cleaned provisions JSONL
+scripts/build_jsonl.py     chat JSONL for train, validation, and test
+scripts/show_examples.py   print a few training prompts
 tests/                     unit tests
 docs/architecture.md       data flow
 docs/data.md               corpus, license, filters

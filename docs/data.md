@@ -33,11 +33,33 @@ The text is downloaded at runtime into the Hugging Face cache. It is not committ
 5. Inside one split and one clause type, drop a second clause when it shares a 10-word opening and the word-set overlap is at least 0.92. A one-word edit in a long standard clause is the case this catches. Different clause types are left alone.
 6. Cap the train split at 12,000 rows, stratified by clause type, seed 42. Validation and test are filtered the same way and are not capped. The official test split is never used as training text.
 
+## Chat JSONL
+
+`scripts/build_jsonl.py` reads `provisions.jsonl` and writes three files from `configs/default.yaml`:
+
+| File | Split | Role |
+| --- | --- | --- |
+| `data/processed/train.jsonl` | train | trainer |
+| `data/processed/val.jsonl` | validation | trainer eval |
+| `data/processed/test.jsonl` | test | held out |
+
+Each line is one chat record:
+
+- system: complete the clause in the contract register, with no commentary
+- user: the clause type and a prefix
+- assistant: the gold tail
+
+The cut is the word boundary closest to 40 percent of the characters. Both sides must be at least 24 characters, and `prefix + " " + tail` is the original provision. A provision that cannot be cut is skipped.
+
+After the cut, any train or validation row whose full text or gold tail matches a test row is dropped. The script then checks that none of those overlaps remain. `scripts/show_examples.py` prints three training records.
+
 ## Commands
 
 ```bash
 python scripts/inspect_corpus.py
 python scripts/prepare_corpus.py
+python scripts/build_jsonl.py
+python scripts/show_examples.py
 ```
 
-`inspect_corpus.py` prints raw length and label counts. `prepare_corpus.py` prints how many rows each filter removed and the final split sizes.
+`inspect_corpus.py` prints raw length and label counts. `prepare_corpus.py` prints how many rows each filter removed and the final split sizes. `build_jsonl.py` prints how many rows were skipped or removed for holdout overlap, then the written split sizes.

@@ -36,6 +36,8 @@ LEDGAR provisions are already one clause each, with a type label. That maps onto
 
 `clausedraft.config.load_config` reads `configs/default.yaml` and rejects a broken prefix split, an empty model id, or a non-positive LoRA rank. `scripts/check_gpu.py` loads a tiny NF4 linear layer on CUDA and runs one forward. That checks the Blackwell kernel path before any model download.
 
-`scripts/prepare_corpus.py` loads LEDGAR, cleans it, and writes `data/processed/provisions.jsonl`. Exact copies prefer the test split over train, so a clause that leaked into both does not remain in the training rows. The train cap is stratified by clause type. Details and the citation are in [data.md](data.md).
+`scripts/prepare_corpus.py` loads LEDGAR, cleans it, and writes `data/processed/provisions.jsonl`. Exact copies prefer the test split over train, so a clause that leaked into both does not remain in the training rows. The train cap is stratified by clause type.
+
+`scripts/build_jsonl.py` turns each remaining provision into a chat example. The user message names the clause type and gives a prefix of about 40 percent of the words. The assistant message is the rest of the clause, and that is the only text the loss will cover. Train and validation are written for the trainer. The test file is held out. A leakage check drops any train or validation row that still shares its full text or its gold tail with the test split. Details and the citation are in [data.md](data.md).
 
 Checkpoints, the downloaded corpus, and `outputs/` are gitignored. The adapter is a training artifact, not source.
