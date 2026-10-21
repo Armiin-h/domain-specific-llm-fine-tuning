@@ -8,7 +8,7 @@ Outputs are drafting demos, not legal advice.
 
 ## What is in the tree
 
-The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, and prepares the LEDGAR corpus. `scripts/prepare_corpus.py` writes cleaned provisions. `scripts/build_jsonl.py` cuts each provision into a prefix and a gold tail, writes chat JSONL for train, validation, and a held-out test split, and drops any train or validation row whose text or tail also appears in test. Those JSONL files are gitignored. The trainer, evaluation, and the query API are not in this tree yet.
+The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, prepares the LEDGAR corpus, and can run QLoRA supervised fine-tuning. `scripts/train.py` loads Qwen2.5-3B-Instruct in 4-bit, trains a LoRA adapter on the assistant tail only, and writes that adapter under `outputs/` (gitignored). A scored evaluation and the query API are not in this tree yet.
 
 ## Stack
 
@@ -35,6 +35,7 @@ python scripts/inspect_corpus.py
 python scripts/prepare_corpus.py
 python scripts/build_jsonl.py
 python scripts/show_examples.py
+python scripts/train.py --limit 32 --max-steps 1 --output-dir outputs/smoke
 pytest
 ```
 
@@ -51,9 +52,11 @@ scripts/inspect_corpus.py  raw length and label counts
 scripts/prepare_corpus.py  cleaned provisions JSONL
 scripts/build_jsonl.py     chat JSONL for train, validation, and test
 scripts/show_examples.py   print a few training prompts
+scripts/train.py           QLoRA supervised fine-tune
 tests/                     unit tests
 docs/architecture.md       data flow
 docs/data.md               corpus, license, filters
+docs/training.md           smoke check and the full run
 ```
 
-See [docs/architecture.md](docs/architecture.md) and [docs/data.md](docs/data.md).
+See [docs/architecture.md](docs/architecture.md), [docs/data.md](docs/data.md), and [docs/training.md](docs/training.md).
