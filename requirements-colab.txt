@@ -1,0 +1,9 @@
+# Colab already provides a CUDA build of torch. Do not install requirements.txt
+# there: that file pins the CUDA 13.0 wheel used by an RTX 50-series laptop.
+transformers>=5.17,<6
+peft>=0.21,<0.22
+trl>=1.7,<2
+datasets>=4.7,<6
+accelerate>=1.4,<2
+bitsandbytes>=0.49,<0.51
+PyYAML>=6,<7

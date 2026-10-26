@@ -12,19 +12,25 @@ One optimizer step on 32 training rows, saved under `outputs/smoke` (gitignored)
 python scripts/train.py --limit 32 --max-steps 1 --output-dir outputs/smoke
 ```
 
-The command prints `train_loss` and writes `outputs/smoke/adapter_config.json`, the adapter weights, and `loss.json`.
+The command prints `train_loss` and writes `outputs/smoke/adapter_config.json`, the adapter weights, `loss.json`, `loss.svg`, and `model_card.md`.
 
 The base model is downloaded into the Hugging Face hub cache on first use (about 6 GB for the 3B checkpoint). If that drive is short on space, set `HF_HUB_CACHE` to a directory elsewhere before running the command.
 
 ## Full run
 
-```bash
-python scripts/train.py
-```
+The epoch does not run on the 8 GB laptop. It runs on a free Colab T4, which has 16 GB and a Linux torch build, and the adapter is stored on Google Drive so a dropped session can continue.
 
-That uses `configs/default.yaml`: one epoch, batch size 1, gradient accumulation 8, sequence length 1024, learning rate 2e-4. Checkpoints land in `outputs/adapter`. Validation runs every 50 steps. The test split is not passed to the trainer.
+Open [notebooks/train_colab.ipynb](../notebooks/train_colab.ipynb) in Colab after this repo is on GitHub:
 
-If the 3B model runs out of memory, repeat the command with the smaller fallback:
+[ClauseDraft Colab notebook](https://colab.research.google.com/github/Armiin-h/domain-specific-llm-fine-tuning/blob/main/notebooks/train_colab.ipynb)
+
+The notebook clones the repo, installs `requirements-colab.txt` (no torch pin), prepares LEDGAR, and calls `scripts/train.py`. That uses `configs/default.yaml`: one epoch, batch size 1, gradient accumulation 8, sequence length 1024, learning rate 2e-4. The test split is not passed to the trainer. Validation runs every 50 steps on the first 128 rows of the validation file. Scoring the full validation file on that cadence would take longer than the epoch.
+
+The Drive folder receives checkpoints every 100 steps, then the adapter weights, `loss.json`, `loss.svg`, and `model_card.md`. The card records the base model id, the sha256 of the train file, the hyperparameters, and the final losses. Adapter weights stay out of git. If the session dies, rerun the resume cell in the notebook.
+
+A checkpoint directory left on the laptop under `outputs/adapter` is an interrupted run, not a finished adapter.
+
+If a hosted GPU runs out of memory, repeat the train command with the smaller fallback:
 
 ```bash
 python scripts/train.py --model Qwen/Qwen2.5-1.5B-Instruct

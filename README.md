@@ -8,7 +8,7 @@ Outputs are drafting demos, not legal advice.
 
 ## What is in the tree
 
-The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, prepares the LEDGAR corpus, and can run QLoRA supervised fine-tuning. `scripts/train.py` loads Qwen2.5-3B-Instruct in 4-bit, trains a LoRA adapter on the assistant tail only, and writes that adapter under `outputs/` (gitignored). A scored evaluation and the query API are not in this tree yet.
+The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, prepares the LEDGAR corpus, and can run QLoRA supervised fine-tuning. `scripts/train.py` loads Qwen2.5-3B-Instruct in 4-bit, trains a LoRA adapter on the assistant tail only, and writes that adapter along with a loss curve and a model card. The laptop command is a one-step smoke check. The full epoch runs on a free Colab GPU and stores the adapter on Drive. See [docs/training.md](docs/training.md). A scored evaluation and the query API are not in this tree yet.
 
 ## Stack
 
@@ -18,7 +18,7 @@ The package loads `configs/default.yaml`, probes the local GPU for a working 4-b
 | Training | Hugging Face Transformers, PEFT, TRL (`SFTTrainer`) |
 | Quantization | bitsandbytes NF4, double quant, bfloat16 compute |
 | Corpus | `coastalcph/lex_glue`, config `ledgar` |
-| Hardware target | 8 GB NVIDIA GPU (tested on an RTX 5060 Laptop) |
+| Hardware target | Laptop smoke check on an 8 GB RTX 5060. Full epoch on a free Colab T4 |
 
 ## Setup
 
@@ -56,7 +56,9 @@ scripts/train.py           QLoRA supervised fine-tune
 tests/                     unit tests
 docs/architecture.md       data flow
 docs/data.md               corpus, license, filters
-docs/training.md           smoke check and the full run
+docs/training.md           smoke check and the Colab epoch
+notebooks/train_colab.ipynb  full epoch on a free Colab GPU
+requirements-colab.txt     training libs without the laptop torch pin
 ```
 
 See [docs/architecture.md](docs/architecture.md), [docs/data.md](docs/data.md), and [docs/training.md](docs/training.md).
