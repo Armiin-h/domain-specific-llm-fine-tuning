@@ -9,6 +9,7 @@ import torch
 from trl import SFTConfig
 
 from clausedraft.config import AppConfig
+from clausedraft.train.quant import native_bf16
 
 _QWEN_EOS = "<|im_end|>"
 
@@ -30,7 +31,7 @@ def build_sft_config(
     use_bf16, use_fp16 = training_precision(
         train.bf16,
         cuda=torch.cuda.is_available(),
-        bf16_supported=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+        bf16_supported=native_bf16(),
     )
     weight_dtype = "bfloat16" if use_bf16 else "float16"
     return SFTConfig(

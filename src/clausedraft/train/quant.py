@@ -14,6 +14,13 @@ _COMPUTE_DTYPES = {
 }
 
 
+def native_bf16() -> bool:
+    """True only on Ampere or newer. A T4 reports bf16 support and then fails the kernels."""
+    if not torch.cuda.is_available():
+        return False
+    return torch.cuda.get_device_capability()[0] >= 8
+
+
 def resolve_compute_dtype_name(name: str, *, cuda: bool, bf16_supported: bool) -> str:
     if name == "bfloat16" and cuda and not bf16_supported:
         return "float16"
@@ -26,7 +33,7 @@ def bitsandbytes_config(quant: QuantizationConfig) -> BitsAndBytesConfig:
     compute_name = resolve_compute_dtype_name(
         quant.bnb_4bit_compute_dtype,
         cuda=torch.cuda.is_available(),
-        bf16_supported=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+        bf16_supported=native_bf16(),
     )
     compute_dtype = _COMPUTE_DTYPES.get(compute_name)
     if compute_dtype is None:
