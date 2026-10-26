@@ -56,6 +56,7 @@ class TrainConfigSection:
     warmup_ratio: float
     logging_steps: int
     eval_steps: int
+    eval_sample_cap: int
     save_steps: int
     gradient_checkpointing: bool
     bf16: bool
@@ -153,6 +154,7 @@ def _parse(raw: dict) -> AppConfig:
             warmup_ratio=float(train["warmup_ratio"]),
             logging_steps=_positive_int(train, "logging_steps"),
             eval_steps=_positive_int(train, "eval_steps"),
+            eval_sample_cap=_positive_int(train, "eval_sample_cap"),
             save_steps=_positive_int(train, "save_steps"),
             gradient_checkpointing=bool(train["gradient_checkpointing"]),
             bf16=bool(train["bf16"]),

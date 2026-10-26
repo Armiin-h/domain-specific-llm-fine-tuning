@@ -24,6 +24,8 @@ def test_default_config_matches_8gb_qlora_setup():
     assert cfg.data.subset == "ledgar"
     assert cfg.data.train_sample_cap == 12000
     assert cfg.train.per_device_train_batch_size == 1
+    assert cfg.train.eval_steps == 50
+    assert cfg.train.eval_sample_cap == 128
     assert cfg.train.assistant_only_loss is True
     assert cfg.paths.test_jsonl == "data/processed/test.jsonl"
 

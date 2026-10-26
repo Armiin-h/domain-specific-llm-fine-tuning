@@ -41,6 +41,9 @@ train:
   warmup_ratio: 0.03
   logging_steps: 10
   eval_steps: 50
+  # Full validation is about 9k rows. Scoring all of them every 50 steps
+  # would dominate the epoch on an 8 GB laptop, so each eval uses this prefix.
+  eval_sample_cap: 128
   save_steps: 100
   gradient_checkpointing: true
   bf16: true
