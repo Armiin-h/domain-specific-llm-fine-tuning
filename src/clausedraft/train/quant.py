@@ -14,10 +14,21 @@ _COMPUTE_DTYPES = {
 }
 
 
+def resolve_compute_dtype_name(name: str, *, cuda: bool, bf16_supported: bool) -> str:
+    if name == "bfloat16" and cuda and not bf16_supported:
+        return "float16"
+    return name
+
+
 def bitsandbytes_config(quant: QuantizationConfig) -> BitsAndBytesConfig:
     if not quant.load_in_4bit:
         raise ValueError("QLoRA training expects load_in_4bit")
-    compute_dtype = _COMPUTE_DTYPES.get(quant.bnb_4bit_compute_dtype)
+    compute_name = resolve_compute_dtype_name(
+        quant.bnb_4bit_compute_dtype,
+        cuda=torch.cuda.is_available(),
+        bf16_supported=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+    )
+    compute_dtype = _COMPUTE_DTYPES.get(compute_name)
     if compute_dtype is None:
         known = ", ".join(sorted(_COMPUTE_DTYPES))
         raise ValueError(f"bnb_4bit_compute_dtype must be one of {known}")

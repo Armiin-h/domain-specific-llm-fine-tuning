@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from clausedraft.config import load_config
-from clausedraft.train.sft_args import build_sft_config
+from clausedraft.train.sft_args import build_sft_config, training_precision
 
 
 def test_sft_config_trains_the_assistant_tokens_only():
@@ -24,6 +24,12 @@ def test_sft_config_trains_the_assistant_tokens_only():
     assert args.eos_token == "<|im_end|>"
     assert args.seed == 42
     assert args.warmup_steps == 45
+
+
+def test_t4_trains_in_fp16():
+    assert training_precision(True, cuda=True, bf16_supported=False) == (False, True)
+    assert training_precision(True, cuda=True, bf16_supported=True) == (True, False)
+    assert training_precision(True, cuda=False, bf16_supported=False) == (True, False)
 
 
 def test_sft_config_short_run_skips_mid_training_checkpoints():

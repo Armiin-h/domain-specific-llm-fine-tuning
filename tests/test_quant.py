@@ -1,5 +1,5 @@
 from clausedraft.config import QuantizationConfig, load_config
-from clausedraft.train.quant import bitsandbytes_config
+from clausedraft.train.quant import bitsandbytes_config, resolve_compute_dtype_name
 
 
 def test_bitsandbytes_config_uses_nf4_and_bfloat16():
@@ -8,6 +8,11 @@ def test_bitsandbytes_config_uses_nf4_and_bfloat16():
     assert config.bnb_4bit_quant_type == "nf4"
     assert config.bnb_4bit_use_double_quant is True
     assert config.bnb_4bit_compute_dtype is not None
+
+
+def test_t4_compute_dtype_falls_back_to_float16():
+    assert resolve_compute_dtype_name("bfloat16", cuda=True, bf16_supported=False) == "float16"
+    assert resolve_compute_dtype_name("bfloat16", cuda=True, bf16_supported=True) == "bfloat16"
 
 
 def test_bitsandbytes_config_rejects_a_full_precision_load():

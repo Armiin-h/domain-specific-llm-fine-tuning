@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
+import torch
 from trl import SFTConfig
 
 from clausedraft.config import AppConfig
@@ -26,6 +27,12 @@ def build_sft_config(
     if train_rows < 1:
         raise ValueError("train_rows must be a positive integer")
     train = config.train
+    use_bf16, use_fp16 = training_precision(
+        train.bf16,
+        cuda=torch.cuda.is_available(),
+        bf16_supported=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
+    )
+    weight_dtype = "bfloat16" if use_bf16 else "float16"
     return SFTConfig(
         output_dir=str(output_dir),
         num_train_epochs=train.num_train_epochs,
@@ -51,7 +58,8 @@ def build_sft_config(
         save_total_limit=2,
         gradient_checkpointing=train.gradient_checkpointing,
         gradient_checkpointing_kwargs={"use_reentrant": False},
-        bf16=train.bf16,
+        bf16=use_bf16,
+        fp16=use_fp16,
         optim="paged_adamw_8bit",
         assistant_only_loss=train.assistant_only_loss,
         max_length=config.model.max_seq_length,
@@ -61,9 +69,18 @@ def build_sft_config(
         report_to="none",
         seed=config.data.seed,
         eos_token=_QWEN_EOS if "Qwen" in model_name else None,
-        model_init_kwargs={"dtype": "bfloat16"} if train.bf16 else None,
+        model_init_kwargs={"dtype": weight_dtype} if train.bf16 else None,
         remove_unused_columns=False,
     )
+
+
+def training_precision(requested_bf16: bool, *, cuda: bool, bf16_supported: bool) -> tuple[bool, bool]:
+    """Return (bf16, fp16). A T4 has no bfloat16 kernels, so the same config uses fp16 there."""
+    if not requested_bf16:
+        return False, False
+    if cuda and not bf16_supported:
+        return False, True
+    return True, False
 
 
 def warmup_steps_for(

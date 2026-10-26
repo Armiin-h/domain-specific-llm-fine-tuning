@@ -24,9 +24,9 @@ Open [notebooks/train_colab.ipynb](../notebooks/train_colab.ipynb) in Colab afte
 
 [ClauseDraft Colab notebook](https://colab.research.google.com/github/Armiin-h/domain-specific-llm-fine-tuning/blob/main/notebooks/train_colab.ipynb)
 
-The notebook clones the repo, installs `requirements-colab.txt` (no torch pin), prepares LEDGAR, and calls `scripts/train.py`. That uses `configs/default.yaml`: one epoch, batch size 1, gradient accumulation 8, sequence length 1024, learning rate 2e-4. The test split is not passed to the trainer. Validation runs every 50 steps on the first 128 rows of the validation file. Scoring the full validation file on that cadence would take longer than the epoch.
+The notebook clones the repo, installs `requirements-colab.txt` (no torch pin), prepares LEDGAR, and calls `scripts/train.py`. Training runs on the Colab disk, then the adapter is copied to Drive. A free T4 has no bfloat16 kernels, so the trainer uses fp16 on that GPU and bfloat16 on a GPU that supports it. The run uses `configs/default.yaml`: one epoch, batch size 1, gradient accumulation 8, sequence length 1024, learning rate 2e-4. The test split is not passed to the trainer. Validation runs every 50 steps on the first 128 rows of the validation file. Scoring the full validation file on that cadence would take longer than the epoch.
 
-The Drive folder receives checkpoints every 100 steps, then the adapter weights, `loss.json`, `loss.svg`, and `model_card.md`. The card records the base model id, the sha256 of the train file, the hyperparameters, and the final losses. Adapter weights stay out of git. If the session dies, rerun the resume cell in the notebook.
+The Colab disk receives checkpoints every 100 steps. When the epoch finishes, the notebook copies the adapter weights, `loss.json`, `loss.svg`, and `model_card.md` to Drive. The card records the base model id, the sha256 of the train file, the hyperparameters, and the final losses. Adapter weights stay out of git. If the session dies, rerun the resume cell in the notebook.
 
 A checkpoint directory left on the laptop under `outputs/adapter` is an interrupted run, not a finished adapter.
 

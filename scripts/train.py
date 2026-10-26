@@ -3,6 +3,7 @@
 import argparse
 import os
 import shutil
+import sys
 from pathlib import Path
 
 os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
@@ -31,13 +32,18 @@ def main() -> int:
     config = load_config()
     train_path = REPO_ROOT / config.paths.train_jsonl
     eval_path = REPO_ROOT / config.paths.val_jsonl
+    cache = _hub_cache_dir()
+    free_gb = shutil.disk_usage(cache).free / 1024**3
+    _log(f"train file: {train_path} ({'found' if train_path.is_file() else 'missing'})")
+    _log(f"hub cache free: {free_gb:.1f} GB at {cache}")
     if not train_path.is_file():
-        print(f"missing {train_path}. Run scripts/build_jsonl.py first.")
+        _log(f"missing {train_path}. Run scripts/build_jsonl.py first.")
         return 1
-
-    cache_problem = _cache_space_message()
-    if cache_problem:
-        print(cache_problem)
+    if shutil.disk_usage(cache).free < _MIN_FREE_BYTES:
+        _log(
+            f"Hugging Face cache at {cache} has {free_gb:.1f} GB free. "
+            "The 3B base model needs about 8 GB. Set HF_HUB_CACHE to a directory on a larger drive and rerun."
+        )
         return 1
 
     output_dir = resolve_output_dir(config, args.output_dir)
@@ -60,17 +66,14 @@ def main() -> int:
     return 0
 
 
-def _cache_space_message() -> str | None:
+def _hub_cache_dir() -> Path:
     cache = Path(os.environ.get("HF_HUB_CACHE", Path.home() / ".cache" / "huggingface" / "hub"))
     cache.mkdir(parents=True, exist_ok=True)
-    free = shutil.disk_usage(cache).free
-    if free >= _MIN_FREE_BYTES:
-        return None
-    free_gb = free / 1024**3
-    return (
-        f"Hugging Face cache at {cache} has {free_gb:.1f} GB free. "
-        "The 3B base model needs about 8 GB. Set HF_HUB_CACHE to a directory on a larger drive and rerun."
-    )
+    return cache
+
+
+def _log(message: str) -> None:
+    print(message, file=sys.stderr, flush=True)
 
 
 if __name__ == "__main__":
