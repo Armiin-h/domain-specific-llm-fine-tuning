@@ -21,6 +21,11 @@ def main() -> int:
     parser.add_argument("--max-steps", type=int, default=None, help="Stop after N optimizer steps.")
     parser.add_argument("--output-dir", default=None, help="Adapter directory. Defaults to the config path.")
     parser.add_argument("--model", default=None, help="Base model id. Defaults to the config model.")
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Continue from the last checkpoint in the output directory.",
+    )
     args = parser.parse_args()
 
     config = load_config()
@@ -44,10 +49,11 @@ def main() -> int:
         model_name=args.model,
         limit=args.limit,
         max_steps=args.max_steps,
+        resume=args.resume,
     )
     print(f"train_rows: {result.train_rows}")
     print(f"eval_rows: {result.eval_rows}")
-    for key in ("train_loss", "train_runtime"):
+    for key in ("train_loss", "eval_loss", "train_runtime"):
         if key in result.metrics:
             print(f"{key}: {result.metrics[key]}")
     print(f"adapter: {result.output_dir}")
