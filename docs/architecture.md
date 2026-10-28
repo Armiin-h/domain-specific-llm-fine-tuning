@@ -42,4 +42,6 @@ LEDGAR provisions are already one clause each, with a type label. That maps onto
 
 `scripts/train.py` loads that base model in 4-bit, attaches the LoRA adapter from the config, and trains with loss only on the assistant tokens. The script writes the adapter, `loss.json`, a loss curve, and a model card. It does not write the frozen base weights. A one-step smoke run is `--limit 32 --max-steps 1`. The full epoch is the same command on a free Colab GPU, via [notebooks/train_colab.ipynb](../notebooks/train_colab.ipynb), with validation every 50 steps on the first 128 validation rows. See [training.md](training.md).
 
+`scripts/eval_generate.py` takes eight held-out test prompts and continues each one with the base model, then again with the adapter. Decoding is greedy. The gallery reports word overlap with the gold tail, a contract-register check, and the gold-tail loss. The two models are not loaded together. See [eval.md](eval.md).
+
 Checkpoints, the downloaded corpus, and `outputs/` are gitignored. The adapter is a training artifact, not source.

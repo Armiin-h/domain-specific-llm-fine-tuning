@@ -8,7 +8,7 @@ Outputs are drafting demos, not legal advice.
 
 ## What is in the tree
 
-The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, prepares the LEDGAR corpus, and can run QLoRA supervised fine-tuning. `scripts/train.py` loads Qwen2.5-3B-Instruct in 4-bit, trains a LoRA adapter on the assistant tail only, and writes that adapter along with a loss curve and a model card. The laptop command is a one-step smoke check. The full epoch runs on a free Colab GPU and stores the adapter on Drive. See [docs/training.md](docs/training.md). A scored evaluation and the query API are not in this tree yet.
+The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, prepares the LEDGAR corpus, and can run QLoRA supervised fine-tuning. `scripts/train.py` loads Qwen2.5-3B-Instruct in 4-bit, trains a LoRA adapter on the assistant tail only, and writes that adapter along with a loss curve and a model card. The laptop command is a one-step smoke check. The full epoch runs on a free Colab GPU. `scripts/eval_generate.py` continues a fixed set of held-out prefixes with the base model and the adapter and writes [docs/gallery.md](docs/gallery.md). See [docs/training.md](docs/training.md) and [docs/eval.md](docs/eval.md). The query API is not in this tree yet.
 
 ## Stack
 
@@ -36,6 +36,7 @@ python scripts/prepare_corpus.py
 python scripts/build_jsonl.py
 python scripts/show_examples.py
 python scripts/train.py --limit 32 --max-steps 1 --output-dir outputs/smoke
+python scripts/eval_generate.py --adapter outputs/smoke --output docs/gallery.md
 pytest
 ```
 
@@ -53,12 +54,15 @@ scripts/prepare_corpus.py  cleaned provisions JSONL
 scripts/build_jsonl.py     chat JSONL for train, validation, and test
 scripts/show_examples.py   print a few training prompts
 scripts/train.py           QLoRA supervised fine-tune
+scripts/eval_generate.py   held-out base versus adapter gallery
 tests/                     unit tests
 docs/architecture.md       data flow
 docs/data.md               corpus, license, filters
 docs/training.md           smoke check and the Colab epoch
+docs/eval.md               held-out prompts, overlap, and register check
+docs/gallery.md            base versus adapter continuations
 notebooks/train_colab.ipynb  full epoch on a free Colab GPU
 requirements-colab.txt     training libs without the laptop torch pin
 ```
 
-See [docs/architecture.md](docs/architecture.md), [docs/data.md](docs/data.md), and [docs/training.md](docs/training.md).
+See [docs/architecture.md](docs/architecture.md), [docs/data.md](docs/data.md), [docs/training.md](docs/training.md), and [docs/eval.md](docs/eval.md).
