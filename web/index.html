@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClauseDraft</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>ClauseDraft</h1>
+      <p class="disclaimer">Drafting demo, not legal advice.</p>
+    </header>
+    <form id="draft-form">
+      <label>
+        Clause type
+        <select id="clause-type" name="clause-type"></select>
+      </label>
+      <label>
+        Decoding
+        <select id="preset" name="preset">
+          <option value="greedy">Greedy</option>
+          <option value="draft">Draft</option>
+        </select>
+      </label>
+      <label>
+        Start of the clause
+        <textarea id="prefix" name="prefix" rows="6" placeholder="This Agreement shall be governed"></textarea>
+      </label>
+      <div class="examples" id="examples"></div>
+      <button type="submit" id="continue">Continue</button>
+    </form>
+    <section id="result" aria-live="polite">
+      <p id="status" class="status"></p>
+      <pre id="continuation" hidden></pre>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

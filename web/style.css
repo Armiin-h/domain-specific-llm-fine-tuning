@@ -1,0 +1,112 @@
+:root {
+  color: #1c1a17;
+  background: #f4f1ea;
+  font-family: "Segoe UI", sans-serif;
+  line-height: 1.45;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+h1 {
+  margin: 0 0 0.35rem;
+  font-family: Georgia, serif;
+  font-weight: 500;
+  font-size: 2rem;
+}
+
+.disclaimer {
+  margin: 0 0 1.75rem;
+  color: #6b4e2e;
+}
+
+form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+}
+
+select,
+textarea,
+button,
+.example {
+  font: inherit;
+}
+
+select,
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid #c9c2b4;
+  border-radius: 4px;
+  background: #fffdf8;
+  color: inherit;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 8rem;
+  font-family: Georgia, serif;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.example,
+button[type="submit"] {
+  border: 1px solid #1c1a17;
+  background: #1c1a17;
+  color: #f4f1ea;
+  border-radius: 4px;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+}
+
+.example {
+  background: transparent;
+  color: #1c1a17;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+#result {
+  margin-top: 1.5rem;
+}
+
+.status {
+  min-height: 1.4rem;
+  margin: 0 0 0.75rem;
+}
+
+.status.error {
+  color: #8a2b1a;
+}
+
+#continuation {
+  margin: 0;
+  padding: 1rem;
+  white-space: pre-wrap;
+  font-family: Georgia, serif;
+  background: #fffdf8;
+  border: 1px solid #c9c2b4;
+  border-radius: 4px;
+}
