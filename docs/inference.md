@@ -15,4 +15,6 @@ python scripts/complete.py --adapter outputs/smoke --type "Governing Laws" --pre
 
 `--health` loads the model and prints whether CUDA is available, which adapter is attached, and how many clause types the checker knows. A completion without `--adapter` uses the base model alone.
 
+The same checks and presets are what `scripts/serve.py` exposes. The page and the JSON routes are described in [api.md](api.md).
+
 The text is a drafting demo, not legal advice.

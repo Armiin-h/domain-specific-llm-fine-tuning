@@ -8,7 +8,7 @@ Outputs are drafting demos, not legal advice.
 
 ## What is in the tree
 
-The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, prepares the LEDGAR corpus, and can run QLoRA supervised fine-tuning. `scripts/train.py` loads Qwen2.5-3B-Instruct in 4-bit, trains a LoRA adapter on the assistant tail only, and writes that adapter along with a loss curve and a model card. The laptop command is a one-step smoke check. The full epoch runs on a free Colab GPU. `scripts/eval_generate.py` continues a fixed set of held-out prefixes with the base model and the adapter and writes [docs/gallery.md](docs/gallery.md). `scripts/complete.py` continues one prefix for a named clause type. See [docs/training.md](docs/training.md), [docs/eval.md](docs/eval.md), and [docs/inference.md](docs/inference.md). The query API is not in this tree yet.
+The package loads `configs/default.yaml`, probes the local GPU for a working 4-bit kernel, prepares the LEDGAR corpus, and can run QLoRA supervised fine-tuning. `scripts/train.py` loads Qwen2.5-3B-Instruct in 4-bit, trains a LoRA adapter on the assistant tail only, and writes that adapter along with a loss curve and a model card. The laptop command is a one-step smoke check. The full epoch runs on a free Colab GPU. `scripts/eval_generate.py` continues a fixed set of held-out prefixes with the base model and the adapter and writes [docs/gallery.md](docs/gallery.md). `scripts/complete.py` continues one prefix for a named clause type. `scripts/serve.py` serves that same completion behind a page: a type picker, a prefix box, a few example prefixes, and the continuation. See [docs/training.md](docs/training.md), [docs/eval.md](docs/eval.md), [docs/inference.md](docs/inference.md), and [docs/api.md](docs/api.md).
 
 ## Stack
 
@@ -19,6 +19,7 @@ The package loads `configs/default.yaml`, probes the local GPU for a working 4-b
 | Quantization | bitsandbytes NF4, double quant, bfloat16 compute |
 | Corpus | `coastalcph/lex_glue`, config `ledgar` |
 | Hardware target | Laptop smoke check on an 8 GB RTX 5060. Full epoch on a free Colab T4 |
+| Page | FastAPI, static files under `web/` |
 
 ## Setup
 
@@ -39,6 +40,7 @@ python scripts/train.py --limit 32 --max-steps 1 --output-dir outputs/smoke
 python scripts/eval_generate.py --adapter outputs/smoke --output docs/gallery.md
 python scripts/complete.py --list-types
 python scripts/complete.py --adapter outputs/smoke --type "Governing Laws" --prefix "This Agreement shall be governed"
+python scripts/serve.py --adapter outputs/smoke
 pytest
 ```
 
@@ -58,15 +60,18 @@ scripts/show_examples.py   print a few training prompts
 scripts/train.py           QLoRA supervised fine-tune
 scripts/eval_generate.py   held-out base versus adapter gallery
 scripts/complete.py        continue one clause from a type and a prefix
+scripts/serve.py           page and JSON API for one continuation
+web/                       the page served at /
 tests/                     unit tests
 docs/architecture.md       data flow
 docs/data.md               corpus, license, filters
 docs/training.md           smoke check and the Colab epoch
 docs/eval.md               held-out prompts, overlap, and register check
 docs/inference.md          live completion, presets, and the health check
+docs/api.md                page and completion routes
 docs/gallery.md            base versus adapter continuations
 notebooks/train_colab.ipynb  full epoch on a free Colab GPU
 requirements-colab.txt     training libs without the laptop torch pin
 ```
 
-See [docs/architecture.md](docs/architecture.md), [docs/data.md](docs/data.md), [docs/training.md](docs/training.md), [docs/eval.md](docs/eval.md), and [docs/inference.md](docs/inference.md).
+See [docs/architecture.md](docs/architecture.md), [docs/data.md](docs/data.md), [docs/training.md](docs/training.md), [docs/eval.md](docs/eval.md), [docs/inference.md](docs/inference.md), and [docs/api.md](docs/api.md).

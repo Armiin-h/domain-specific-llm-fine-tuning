@@ -44,6 +44,8 @@ LEDGAR provisions are already one clause each, with a type label. That maps onto
 
 `scripts/eval_generate.py` takes eight held-out test prompts and continues each one with the base model, then again with the adapter. Decoding is greedy. The gallery reports word overlap with the gold tail, a contract-register check, and the gold-tail loss. The two models are not loaded together. See [eval.md](eval.md).
 
-`scripts/complete.py` is the live path. It checks the clause type against the 100 LEDGAR labels, loads the base model in 4-bit with an optional adapter, and continues the prefix. `greedy` matches the gallery. `draft` samples. See [inference.md](inference.md).
+`scripts/complete.py` is the live command. It checks the clause type against the 100 LEDGAR labels, loads the base model in 4-bit with an optional adapter, and continues the prefix. `greedy` matches the gallery. `draft` samples. See [inference.md](inference.md).
+
+`scripts/serve.py` is the same drafter behind HTTP. `POST /api/complete` takes a clause type and a prefix. The page at `/` is static files under `web/`, served by that process. An empty prefix is caught in the page. An unknown type or preset is a 400 from the same checks the command uses. See [api.md](api.md).
 
 Checkpoints, the downloaded corpus, and `outputs/` are gitignored. The adapter is a training artifact, not source.
