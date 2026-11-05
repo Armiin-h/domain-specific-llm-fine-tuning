@@ -101,7 +101,8 @@ button[type="submit"]:disabled {
   color: #8a2b1a;
 }
 
-#continuation {
+#continuation,
+.gallery-block pre {
   margin: 0;
   padding: 1rem;
   white-space: pre-wrap;
@@ -109,4 +110,78 @@ button[type="submit"]:disabled {
   background: #fffdf8;
   border: 1px solid #c9c2b4;
   border-radius: 4px;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+}
+
+nav a {
+  color: inherit;
+}
+
+h2 {
+  margin: 2.5rem 0 0.5rem;
+  font-family: Georgia, serif;
+  font-weight: 500;
+  font-size: 1.35rem;
+}
+
+#gallery-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem 1rem;
+  margin: 0 0 1rem;
+}
+
+#gallery-summary div {
+  margin: 0;
+}
+
+#gallery-summary dt {
+  font-size: 0.82rem;
+  color: #6b4e2e;
+}
+
+#gallery-summary dd {
+  margin: 0 0 0.35rem;
+}
+
+details {
+  border-top: 1px solid #c9c2b4;
+  padding: 0.7rem 0;
+}
+
+summary {
+  cursor: pointer;
+  font-family: Georgia, serif;
+}
+
+.gallery-block {
+  margin-top: 0.9rem;
+}
+
+.gallery-block h3 {
+  margin: 0 0 0.35rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.gallery-block pre {
+  max-height: 16rem;
+  overflow: auto;
+}
+
+.score {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  color: #6b4e2e;
+}
+
+@media (max-width: 40rem) {
+  #gallery-summary {
+    grid-template-columns: 1fr;
+  }
 }

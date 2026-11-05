@@ -11,6 +11,10 @@
     <header>
       <h1>ClauseDraft</h1>
       <p class="disclaimer">Drafting demo, not legal advice.</p>
+      <nav>
+        <a href="#draft-form">Draft</a>
+        <a href="#gallery">Comparison</a>
+      </nav>
     </header>
     <form id="draft-form">
       <label>
@@ -34,6 +38,13 @@
     <section id="result" aria-live="polite">
       <p id="status" class="status"></p>
       <pre id="continuation" hidden></pre>
+    </section>
+    <section id="gallery">
+      <h2>Held-out comparison</h2>
+      <p id="gallery-note" class="disclaimer"></p>
+      <p id="gallery-status" class="status"></p>
+      <dl id="gallery-summary"></dl>
+      <div id="gallery-rows"></div>
     </section>
   </main>
   <script src="/static/app.js"></script>
