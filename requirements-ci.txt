@@ -1,0 +1,13 @@
+# Unit tests on a CPU runner. Install a CPU torch wheel first, then this file.
+# The laptop pin in requirements.txt is the CUDA 13.0 build and is not used here.
+# bitsandbytes stays out. The GPU probe reports it missing when the import fails.
+transformers>=5.17,<6
+peft>=0.21,<0.22
+trl>=1.7,<2
+datasets>=4.7,<6
+accelerate>=1.4,<2
+PyYAML>=6,<7
+fastapi>=0.115,<1
+uvicorn>=0.32,<1
+httpx>=0.27,<1
+pytest>=8,<10

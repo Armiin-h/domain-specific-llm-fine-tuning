@@ -97,7 +97,8 @@ def probe_cuda() -> GpuReport:
 def _bitsandbytes_version() -> str | None:
     try:
         import bitsandbytes as bnb
-    except ImportError:
+    except Exception:
+        # A CPU runner can fail this import with an error other than ImportError.
         return None
     return getattr(bnb, "__version__", "unknown")
 
