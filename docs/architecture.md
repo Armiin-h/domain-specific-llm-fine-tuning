@@ -2,28 +2,19 @@
 
 ClauseDraft adapts a 3B instruct model to the wording of US commercial contract clauses. A user supplies a clause type and the start of a clause. The adapter continues it. Comparison against the untouched base model is the measure of whether the adapter picked up the domain.
 
-```text
-LexGLUE LEDGAR
-  provisions + clause type
-        |
-        v
-  clean, cap length, stratified sample
-        |
-        v
-  chat JSONL
-  system: draft in contract register
-  user:    clause type + prefix
-  assistant: gold tail          <-- loss only here
-        |
-        v
-  Qwen2.5-3B-Instruct
-  frozen NF4 weights + LoRA (r=16, alpha=32)
-        |
-        +---------------------------+
-        |                           |
-        v                           v
-  held-out continuations      FastAPI + page
-  base vs adapter             type + prefix -> tail
+The gallery scores the base model, then the adapter. The page loads one of those models. An 8 GB GPU holds one 3B model at a time.
+
+```mermaid
+flowchart TD
+  ledgar["LexGLUE LEDGAR"]
+  clean["Clean, length cap, stratified sample"]
+  jsonl["Chat JSONL, loss on the gold tail"]
+  qwen["Qwen2.5-3B-Instruct, frozen NF4, LoRA"]
+  heldout["Held-out gallery"]
+  page["Completion page"]
+  ledgar --> clean --> jsonl --> qwen
+  qwen --> heldout
+  qwen --> page
 ```
 
 ## Why these settings
@@ -46,6 +37,6 @@ LEDGAR provisions are already one clause each, with a type label. That maps onto
 
 `scripts/complete.py` is the live command. It checks the clause type against the 100 LEDGAR labels, loads the base model in 4-bit with an optional adapter, and continues the prefix. `greedy` matches the gallery. `draft` samples. See [inference.md](inference.md).
 
-`scripts/serve.py` is the same drafter behind HTTP. `POST /api/complete` takes a clause type and a prefix. The page at `/` is static files under `web/`, served by that process. An empty prefix is caught in the page. An unknown type or preset is a 400 from the same checks the command uses. See [api.md](api.md).
+`scripts/serve.py` is the same drafter behind HTTP. `POST /api/complete` takes a clause type and a prefix. The page at `/` is static files under `web/`, served by that process. An empty prefix is caught in the page. An unknown type or preset is a 400 from the same checks the command uses. The section under the form is the saved gallery from `docs/gallery.md`, not a second live model. See [api.md](api.md).
 
 Checkpoints, the downloaded corpus, and `outputs/` are gitignored. The adapter is a training artifact, not source.
