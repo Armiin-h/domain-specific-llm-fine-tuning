@@ -1,12 +1,12 @@
 # The completion page
 
-`scripts/serve.py` loads the base model in 4-bit, attaches an adapter when one is given, and serves a page plus a small JSON API. The page and the API share one process. Both models are never loaded together, so the page continues with the adapter (or the base model alone) and the side-by-side gallery stays a precomputed document.
+`scripts/serve.py` loads the base model in 4-bit, attaches an adapter when one is given, and serves a page plus a small JSON API. The page and the API share one process. Both models are never loaded together, so the page continues with the adapter (or the base model alone). The comparison under the form is the saved gallery, served from `docs/gallery.md`.
 
 ```bash
 python scripts/serve.py --adapter outputs/smoke
 ```
 
-Open `http://127.0.0.1:8000`. Pick a clause type, paste the start of a clause, and press Continue. Four example prefixes fill the form. The line under the title stays on the page: drafting demo, not legal advice.
+Open `http://127.0.0.1:8000`. Pick a clause type, paste the start of a clause, and press Continue. Four example prefixes fill the form. The line under the title stays on the page: drafting demo, not legal advice. Further down, the held-out section shows the saved base and adapter continuations. A shorter setup is in [quickstart.md](quickstart.md).
 
 An empty box is rejected in the page before a request is sent. An unknown clause type or preset comes back as HTTP 400 with the same message the command-line checker uses.
 
@@ -16,6 +16,7 @@ An empty box is rejected in the page before a request is sent. An unknown clause
 
 | Method | Path | Body |
 | --- | --- | --- |
+| GET | `/api/gallery` | the saved base-versus-adapter rows, summary scores, and the note in `docs/gallery.md` |
 | GET | `/api/health` | whether a model is loaded, the adapter path, CUDA, clause-type count, presets |
 | GET | `/api/types` | the 100 LEDGAR clause types |
 | GET | `/api/examples` | the built-in prefixes |
